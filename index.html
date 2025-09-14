@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Red Social de Video — Demo</title>
+  <style>
+    /* Reset básico */
+    *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    html,body{height:100%;margin:0}
+    body{display:flex;align-items:center;justify-content:center;background:#0f172a;color:#0b1220}
+
+/* Estilos para los selects (país y prefijo) */
+select {
+  background-color: #1e1e2f; /* mismo color que el formulario */
+  color: #fff; /* texto blanco */
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+/* Estilos para las opciones desplegadas */
+select option {
+  background-color: #1e1e2f; /* fondo oscuro */
+  color: #fff; /* texto blanco */
+}
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* espacio para el icono */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+  color: #aaa;
+  user-select: none;
+}
+
+.toggle-password:hover {
+  color: #fff;
+}
+
+.toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #fff;
+}
+
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 35px; /* espacio para el icono */
+}
+
+.password-wrapper .toggle-password {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+}
+
+    .toggle-pass {
+      position: relative;
+    }
+
+    .toggle-pass input {
+      width: 100%;
+      padding-right: 50px;
+    }
+
+    .toggle-pass .pass-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: linear-gradient(90deg, #6a11cb, #2575fc);
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    /* Fondo mapamundi simple (SVG inline como background) */
+    .page-bg{
+      position:fixed;inset:0;z-index:0;opacity:0.12;background-repeat:no-repeat;background-position:center;background-size:cover;pointer-events:none;filter:grayscale(.2) contrast(1.1);
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect width="100%" height="100%" fill="%2310213a"/><g stroke="%23ffffff" stroke-opacity="0.6" stroke-width="1" fill="none"><path d="M10 300 C150 100, 350 100, 500 200 C650 300, 850 200, 1190 280" /><path d="M10 360 C180 450, 420 480, 600 420 C780 360, 980 400, 1190 330" /></g><g stroke="%23fff" stroke-opacity="0.6" stroke-width="0.8" fill="none"><path d="M120 120 L260 160"/><path d="M240 380 L380 340"/><path d="M520 80 L650 140"/></g></svg>');
+    }
+
+    /* Contenedor principal */
+    .card{position:relative;z-index:1;width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.7);overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:0}
+
+    /* Panel izquierdo = Login */
+    .panel{padding:28px}
+    .brand{font-weight:700;font-size:20px;margin-bottom:14px;color:#fff}
+    .lead{margin-bottom:16px;color:#cbd5e1}
+
+    label{display:block;font-size:13px;color:#dbeafe;margin-bottom:6px}
+    input,select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff}
+    .row{display:flex;gap:12px}
+    .row > *{flex:1}
+    .small{font-size:12px;color:#94a3b8;margin-top:6px}
+
+    button{padding:10px 14px;border-radius:10px;border:0;background:linear-gradient(90deg,#06b6d4,#7c3aed);color:white;font-weight:600;cursor:pointer}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+
+    .right{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:28px;display:flex;flex-direction:column;gap:10px}
+
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .full{grid-column:1 / -1}
+
+    .toggle-pass{position:relative}
+    .toggle-pass button{position:absolute;right:8px;top:8px;padding:6px 8px;border-radius:8px;background:transparent;border:0;color:#9ca3af}
+
+    /* Main app (after login) */
+    .app{display:none;padding:18px}
+    .app.active{display:block}
+    .video-area{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+    video{width:100%;height:120px;background:#000;border-radius:8px;object-fit:cover}
+    .controls{display:flex;gap:8px;align-items:center;margin-top:8px}
+    .info{color:#cbd5e1;font-size:13px}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .card{grid-template-columns:1fr;}
+    }
+
+    footer{font-size:12px;color:#94a3b8;margin-top:12px}
+    .hint{font-size:12px;color:#a6b2c8}
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+  <div class="card" role="main">
+    <!-- Panel Login izquierdo -->
+    <div class="panel" aria-label="login-panel">
+      <div class="brand">VideoNet — Red social de videos (demo)</div>
+      <div class="lead">Inicia sesión con tu correo o teléfono</div>
+
+      <label for="login-user">Usuario (correo o teléfono)</label>
+      <input id="login-user" placeholder="correo@ejemplo.com o +57 3..." />
+
+      <label for="login-pass">Contraseña</label>
+      <div style="position:relative">
+        <input id="login-pass" type="password" placeholder="********" />
+        <button id="login-toggle" style="position:absolute;right:8px;top:8px">ver</button>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button id="btn-login">Iniciar Sesión</button>
+        <button id="btn-guest" class="ghost">Ingresar como invitado</button>
+      </div>
+      <div class="hint">Si aún no estás registrado, completa el formulario de la derecha.</div>
+      <footer>Demo local — los datos se guardan en tu navegador (localStorage)</footer>
+    </div>
+
+    <!-- Panel Registro derecho -->
+<div class="right" aria-label="register-panel">
+  <div style="font-weight:700;color:#fff">Crear cuenta</div>
+  <div class="form-grid">
+    <div>
+      <label for="nombres">Nombre(s)</label>
+      <input id="nombres" />
+    </div>
+    <div>
+      <label for="apellidos">Apellido(s)</label>
+      <input id="apellidos" />
+    </div>
+    <div class="full">
+      <label for="pais">País</label>
+      <select id="pais"></select>
+    </div>
+    <div>
+      <label for="email">Correo electrónico</label>
+      <input id="email" type="email" />
+    </div>
+    <div>
+      <label for="phonecode">Prefijo</label>
+      <select id="phonecode"></select>
+    </div>
+    <div>
+      <label for="phone">Número de teléfono</label>
+      <input id="phone" placeholder="123456789" />
+    </div>
+    <div class="full toggle-pass">
+      <label for="pass">Crear Contraseña</label>
+      <div class="password-wrapper">
+        <input id="pass" type="password" placeholder="Contraseña" />
+        <span class="toggle-password" onclick="togglePassword('pass', this)">👁️</span>
+      </div>
+    </div>
+    <div class="full toggle-pass">
+      <label for="pass2">Verificar Contraseña</label>
+      <div class="password-wrapper">
+        <input id="pass2" type="password" placeholder="Verificar Contraseña" />
+        <span class="toggle-password" onclick="togglePassword('pass2', this)">👁️</span>
+      </div>
+    </div>
+    <div class="full" style="display:flex;gap:8px;align-items:center">
+      <button id="btn-register">Registrar</button>
+      <div class="small">Al registrarte se guardará el usuario localmente y podrás iniciar sesión inmediatamente.</div>
+    </div>
+  </div>
+</div>
+ <!-- Vista principal (oculta hasta login) -->
+    <div class="app" style="grid-column:1 / -1">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;gap:12px;align-items:center">
+          <strong id="welcome">Bienvenido</strong>
+          <span class="info" id="user-info"></span>
+        </div>
+        <div>
+             <label for="loginPass">Contraseña</label>
+        <div class="password-wrapper">
+             <input type="password" id="loginPass" placeholder="Contraseña">
+             <span class="toggle-password" onclick="togglePassword('loginPass', this)">👁️</span>
+        </div>
+    </div>
+
+        <div style="display:flex;gap:8px">
+          <button id="btn-copylink" class="ghost">Copiar Link</button>
+          <button id="btn-start">Iniciar VideoChat</button>
+          <button id="btn-logout" class="ghost">Cerrar Sesión</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="video-area" id="videos"></div>
+        <div class="controls">
+          <button id="mute">Silenciar</button>
+          <button id="togglecam">Apagar cámara</button>
+          <button id="invite-more" class="ghost">Invitar más</button>
+          <button id="hangup" class="ghost">Colgar / Volver</button>
+          <div class="info" id="status">Estado: desconectado</div>
+        </div>
+      </div>
+
+      <footer style="margin-top:12px">Demo técnico — para videochat multiusuario real se recomienda desplegar un servidor de señalización. El modo "manual" permite 1 a 1 sin servidor.</footer>
+    </div>
+  </div>
+
+  <script>
+    /********************
+     * Datos: países y prefijos (lista abreviada pero amplia)
+     ********************/
+
+    const countries = [
+      "Afganistán","Albania","Argelia","Andorra","Angola","Antigua y Barbuda","Argentina","Armenia","Australia","Austria",
+      "Azerbaiyán","Bahamas","Baréin","Bangladés","Barbados","Bielorrusia","Bélgica","Belice","Benín","Bután",
+      "Bolivia","Bosnia y Herzegovina","Botsuana","Brasil","Brunéi","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Camboya",
+      "Camerún","Canadá","República Centroafricana","Chad","Chile","China","Chipre","Colombia","Comoras","Congo (Brazzaville)",
+      "Congo (Kinshasa)","Costa Rica","Costa de Marfil","Croacia","Cuba","Chipre del Norte","Dinamarca","Yibuti","Dominica","República Dominicana",
+      "Ecuador","Egipto","El Salvador","Guinea Ecuatorial","Eritrea","Estonia","Esuatini","Etiopía","Fiyi","Finlandia",
+      "Francia","Gabón","Gambia","Georgia","Alemania","Ghana","Grecia","Granada","Guatemala","Guinea",
+      "Guinea-Bisáu","Guyana","Haití","Honduras","Hungría","Islandia","India","Indonesia","Irán","Iraq",
+      "Irlanda","Israel","Italia","Jamaica","Japón","Jordania","Kazajistán","Kenia","Kiribati","Corea del Norte",
+      "Corea del Sur","Kuwait","Kirguistán","Laos","Letonia","Líbano","Lesoto","Liberia","Libia","Liechtenstein",
+      "Lituania","Luxemburgo","Madagascar","Malaui","Malasia","Maldivas","Malí","Malta","Islas Marshall","Mauritania",
+      "Mauricio","México","Estados Federados de Micronesia","Moldavia","Mónaco","Mongolia","Montenegro","Marruecos","Mozambique","Myanmar",
+      "Namibia","Nauru","Nepal","Países Bajos","Nueva Zelanda","Nicaragua","Níger","Nigeria","Noruega","Omán",
+      "Pakistán","Palaos","Panamá","Papúa Nueva Guinea","Paraguay","Perú","Filipinas","Polonia","Portugal","Catar",
+      "Rumania","Rusia","Ruanda","San Cristóbal y Nieves","Santa Lucía","San Vicente y las Granadinas","Samoa","San Marino","Santo Tomé y Príncipe","Arabia Saudita",
+      "Senegal","Serbia","Seychelles","Sierra Leona","Singapur","Eslovaquia","Eslovenia","Islas Salomón","Somalia","Sudáfrica",
+      "Sudán del Sur","España","Sri Lanka","Sudán","Surinam","Suecia","Suiza","Siria","Tayikistán","Tanzania",
+      "Tailandia","Timor Oriental","Togo","Tonga","Trinidad y Tobago","Túnez","Turquía","Turkmenistán","Tuvalu","Uganda",
+      "Ucrania","Emiratos Árabes Unidos","Reino Unido","Estados Unidos","Uruguay","Uzbekistán","Vanuatu","Ciudad del Vaticano","Venezuela","Vietnam",
+      "Yemen","Zambia","Zimbabue"
+    ];
+
+    const phoneCodes = [
+      {c:'+1', n:'Estados Unidos / Canadá / Caribe'},
+      {c:'+7', n:'Rusia / Kazajistán'},
+      {c:'+20', n:'Egipto'},{c:'+27', n:'Sudáfrica'},{c:'+34', n:'España'},{c:'+52', n:'México'},{c:'+57', n:'Colombia'},{c:'+54', n:'Argentina'},{c:'+55', n:'Brasil'},{c:'+58', n:'Venezuela'},
+      {c:'+56', n:'Chile'},{c:'+51', n:'Perú'},{c:'+507', n:'Panamá'},{c:'+502', n:'Guatemala'},{c:'+503', n:'El Salvador'},{c:'+504', n:'Honduras'},{c:'+506', n:'Costa Rica'},{c:'+591', n:'Bolivia'},{c:'+593', n:'Ecuador'},{c:'+52', n:'México'},
+      {c:'+44', n:'Reino Unido'},{c:'+49', n:'Alemania'},{c:'+39', n:'Italia'},{c:'+33', n:'Francia'},{c:'+81', n:'Japón'},{c:'+86', n:'China'},{c:'+91', n:'India'},{c:'+62', n:'Indonesia'},{c:'+65', n:'Singapur'},{c:'+60', n:'Malasia'}
+    ];
+
+    // Poblar selects
+    const selectPais = document.getElementById('pais');
+    countries.forEach(p => { const opt = document.createElement('option'); opt.value = p; opt.textContent = p; selectPais.appendChild(opt); });
+    const selectCode = document.getElementById('phonecode');
+    phoneCodes.forEach(p => { const opt = document.createElement('option'); opt.value = p.c; opt.textContent = `${p.c} — ${p.n}`; selectCode.appendChild(opt); });
+
+    /********************
+     * Gestión de usuarios (localStorage)
+     ********************/
+    function getUsers(){ try{return JSON.parse(localStorage.getItem('vn_users')||'{}')}catch(e){return{}} }
+    function saveUsers(u){ localStorage.setItem('vn_users', JSON.stringify(u)); }
+
+    document.getElementById('btn-register').addEventListener('click', ()=>{
+      const nombres = document.getElementById('nombres').value.trim();
+      const apellidos = document.getElementById('apellidos').value.trim();
+      const pais = document.getElementById('pais').value;
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const phone = document.getElementById('phone').value.trim();
+      const phonecode = document.getElementById('phonecode').value;
+      const pass = document.getElementById('pass').value;
+      const pass2 = document.getElementById('pass2').value;
+      if(!nombres||!apellidos) return alert('Ingrese nombres y apellidos');
+      if(!email && !phone) return alert('Ingrese correo o teléfono');
+      if(pass.length < 6) return alert('La contraseña debe tener al menos 6 caracteres');
+      if(pass !== pass2) return alert('Las contraseñas no coinciden');
+
+      const users = getUsers();
+      const key = email || (phonecode+phone);
+      if(users[key]) return alert('Usuario ya registrado con ese correo o teléfono');
+
+      users[key] = {nombres,apellidos,pais,email,phone:phone?phonecode+phone:'',pass};
+      saveUsers(users);
+      alert('Registrado con éxito. Ahora puedes iniciar sesión.');
+      // auto login
+      loginUser(key, users[key]);
+    });
+
+    // Toggle password visibility
+    function makeToggle(inputId, btnId){
+      document.getElementById(btnId).addEventListener('click', ()=>{
+        const inp = document.getElementById(inputId);
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+      });
+    }
+    makeToggle('pass','pass-toggle');
+    makeToggle('pass2','pass2-toggle');
+    makeToggle('login-pass','login-toggle');
+
+    // Login
+    document.getElementById('btn-login').addEventListener('click', ()=>{
+      const user = document.getElementById('login-user').value.trim().toLowerCase();
+      const pass = document.getElementById('login-pass').value;
+      if(!user||!pass)return alert('Ingrese usuario y contraseña');
+      const users = getUsers();
+      const u = users[user];
+      if(!u) return alert('Usuario no encontrado');
+      if(u.pass !== pass) return alert('Contraseña incorrecta');
+      loginUser(user,u);
+    });
+
+    document.getElementById('btn-guest').addEventListener('click', ()=>{
+      const guest = {nombres:'Invitado',apellidos:'',pais:'',email:'',phone:'',pass:''};
+      loginUser('guest_'+Date.now(), guest);
+    });
+
+    function loginUser(key,u){
+      localStorage.setItem('vn_current', JSON.stringify({key, user:u}));
+      showApp(u);
+    }
+
+    function showApp(u){
+      document.querySelector('.card').style.maxWidth = '1400px';
+      document.querySelector('.panel').style.display='none';
+      document.querySelector('.right').style.display='none';
+      const app = document.querySelector('.app');
+      app.classList.add('active');
+      document.getElementById('welcome').textContent = `Hola, ${u.nombres}`;
+      document.getElementById('user-info').textContent = `${u.email || u.phone || ''}`;
+    }
+
+    // Logout
+    document.getElementById('btn-logout').addEventListener('click', ()=>{
+      localStorage.removeItem('vn_current');
+      location.reload();
+    });
+
+    // On load: if user logged
+    window.addEventListener('load', ()=>{
+      const cur = JSON.parse(localStorage.getItem('vn_current')||'null');
+      if(cur) showApp(cur.user);
+    });
+
+    /********************
+     * Video chat (demo)
+     * - Implementa: acceso a cámara, preview, botones mute/cam, copiar link e iniciar.
+     * - Nota: Para un videochat multiusuario REAL (hasta 10), se necesita un servidor de señalización.
+     * - Aquí incluimos: modo manual 1:1 (sin servidor) usando un intercambio copy-paste de SDP, y
+     *   un esqueleto que intenta conectarse a un servidor WebSocket de señalización si el usuario
+     *   proporciona la URL en la consola (VER COMENTARIOS EN EL CÓDIGO).
+     ********************/
+
+    let localStream = null;
+    let pcs = {}; // peer connections por id
+    const videosEl = document.getElementById('videos');
+    const statusEl = document.getElementById('status');
+    let muted=false, camOff=false;
+    const MAX_PEERS = 10;
+
+    async function startLocal(){
+      try{
+        localStream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+        addVideo('local', localStream, true);
+        status('Cámara lista');
+      }catch(e){
+        alert('No se pudo acceder a la cámara/micrófono: '+e.message);
+        status('Error cámara');
+      }
+    }
+
+    function addVideo(id, stream, isLocal=false){
+      // si ya existe, actualizar srcObject
+      let v = document.getElementById('vid-'+id);
+      if(!v){
+        const wrap = document.createElement('div');
+        wrap.style.position='relative';
+        v = document.createElement('video'); v.id = 'vid-'+id; v.autoplay = true; v.playsInline = true; if(isLocal) v.muted = true;
+        wrap.appendChild(v);
+        const label = document.createElement('div'); label.textContent = isLocal ? 'Tú' : id; label.style.position='absolute'; label.style.left='8px'; label.style.bottom='6px'; label.style.color='#fff'; label.style.fontSize='12px';
+        wrap.appendChild(label);
+        videosEl.appendChild(wrap);
+      }
+      v.srcObject = stream;
+    }
+
+    function removeAllRemote(){
+      videosEl.querySelectorAll('[id^="vid-"]').forEach(el=>{ if(el.id!=='vid-local') el.parentElement.remove(); });
+    }
+
+    function status(txt){ statusEl.textContent = 'Estado: ' + txt; }
+
+    document.getElementById('btn-start').addEventListener('click', async ()=>{
+      if(!localStream) await startLocal();
+      // Aquí intentamos 2 modos:
+      // 1) Si existe window.SIGNALING_URL configurada (desplegar un servidor wss), conectamos por WebSocket para señalización.
+      // 2) Si no, abrimos un modal simple para intercambio manual (solo 1:1) usando SDP copy/paste.
+
+      if(window.SIGNALING_URL){
+        startWithSignaling(window.SIGNALING_URL);
+      }else{
+        manualOfferFlow();
+      }
+    });
+
+    document.getElementById('btn-copylink').addEventListener('click', ()=>{
+      // generar room id simple
+      const room = 'room-' + Math.random().toString(36).slice(2,9);
+      const link = location.href.split('#')[0] + '#room=' + room;
+      navigator.clipboard.writeText(link).then(()=> alert('Link copiado al portapapeles:\n'+link));
+    });
+
+    document.getElementById('mute').addEventListener('click', ()=>{
+      if(!localStream) return alert('Primero inicia el videochat');
+      muted = !muted; localStream.getAudioTracks().forEach(t=>t.enabled = !muted);
+      document.getElementById('mute').textContent = muted ? 'Activar sonido' : 'Silenciar';
+    });
+    document.getElementById('togglecam').addEventListener('click', ()=>{
+      if(!localStream) return alert('Primero inicia el videochat');
+      camOff = !camOff; localStream.getVideoTracks().forEach(t=>t.enabled = !camOff);
+      document.getElementById('togglecam').textContent = camOff ? 'Encender cámara' : 'Apagar cámara';
+    });
+
+    document.getElementById('hangup').addEventListener('click', ()=>{
+      // cerrar todas las peerConnections
+      for(const k in pcs){ pcs[k].close(); }
+      pcs = {};
+      removeAllRemote();
+      status('Colgado');
+    });
+
+    document.getElementById('invite-more').addEventListener('click', ()=>{
+      alert('Copia el enlace con "Copiar Link" y envíalo. Para conectar más de 2 usuarios es necesario un servidor de señalización (wss).');
+    });
+
+    /********************
+     * Modo manual 1:1 (sin servidor) — intercambio SDP copy/paste
+     ********************/
+    async function manualOfferFlow(){
+      // Create peer
+      if(Object.keys(pcs).length >= MAX_PEERS) return alert('Máximo de participantes alcanzado');
+      const id = 'peer-' + Math.random().toString(36).slice(2,7);
+      const pc = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
+      pcs[id] = pc;
+      // Añadir tracks
+      localStream.getTracks().forEach(t=>pc.addTrack(t, localStream));
+      pc.ontrack = (ev)=>{ if(ev.streams && ev.streams[0]) addVideo(id, ev.streams[0]); }
+      pc.onicecandidate = (e)=>{ if(e.candidate===null){
+        // Cuando la recopilación ICE termina, mostramos la SDP para copiar
+        const localDesc = pc.localDescription.sdp;
+        const sdp = btoa(unescape(encodeURIComponent(localDesc)));
+        const out = prompt('Comparte este texto (SDP) con la otra persona para que lo pegue en su pantalla y así finalizar la conexión.\n\n'+sdp);
+      }};
+
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      // Pedir SDP remota de la otra persona
+      const remote = prompt('Pega aquí la SDP de la otra persona (si tú eres el iniciador pega la SDP que recibiste)');
+      if(remote){
+        try{
+          const desc = new RTCSessionDescription({type:'answer',sdp:decodeURIComponent(escape(atob(remote)))});
+          await pc.setRemoteDescription(desc);
+          status('Conectado 1:1 (manual)');
+        }catch(e){console.error(e);alert('No se pudo procesar la SDP remota.');}
+      }else{
+        status('Esperando SDP remota...');
+      }
+
+function togglePassword(inputId, el) {
+  const input = document.getElementById(inputId);
+  if (input.type === "password") {
+    input.type = "text";
+    el.textContent = "🙈"; // cambia el icono al ocultar
+  } else {
+    input.type = "password";
+    el.textContent = "👁️"; // icono para mostrar
+  }
+}
+
+const loginPass = document.getElementById("login-pass");
+const loginPassToggle = document.getElementById("login-pass-toggle");
+
+loginPassToggle.addEventListener("click", () => {
+  const type = loginPass.getAttribute("type") === "password" ? "text" : "password";
+  loginPass.setAttribute("type", type);
+  // Alternar ícono 👁️ / 🙈
+  loginPassToggle.textContent = type === "password" ? "👁️" : "🙈";
+});
+
+      // Mostrar message para reciprocidad: la otra persona que reciba tu SDP debe crear su peer y pegarla como 'offer' y devolverte su 'answer'.
+      alert('Si usaste el modo manual debes compartir los bloques de texto (SDP) entre las dos personas. Este modo es solo para demostración 1:1.');
+    }
+
+    /********************
+     * Esqueleto para señalización via WebSocket (recomendada para >2 usuarios)
+     * Para usarla: desplegar o usar un servidor WebSocket de señalización que reenvíe mensajes JSON simples {type, from, to, payload}
+     * PONER la URL en window.SIGNALING_URL antes de iniciar (p.ej. en consola del navegador):
+     *    window.SIGNALING_URL = 'wss://tu-servidor-signaling.example'
+     ********************/
+    async function startWithSignaling(wssUrl){
+      if(!localStream) await startLocal();
+      const ws = new WebSocket(wssUrl);
+      const myId = 'u-'+Math.random().toString(36).slice(2,8);
+      ws.onopen = ()=>{
+        status('Conectado al servidor de señalización');
+        ws.send(JSON.stringify({type:'join',id:myId,room:location.hash||'default'}));
+      };
+      ws.onmessage = async (msg)=>{
+        const data = JSON.parse(msg.data);
+        if(data.type === 'peer-list'){
+          // crear conexiones a peers existentes
+          for(const pid of data.peers){ if(pid === myId) continue; await makeOffer(pid); }
+        }else if(data.type === 'offer'){
+          await handleOffer(data.from, data.sdp);
+        }else if(data.type === 'answer'){
+          await handleAnswer(data.from, data.sdp);
+        }else if(data.type === 'ice'){
+          const pc = pcs[data.from]; if(pc){ pc.addIceCandidate(new RTCIceCandidate(data.cand)).catch(()=>{}); }
+        }
+      };
+
+      async function makeOffer(peerId){
+        if(Object.keys(pcs).length >= MAX_PEERS) return console.warn('Límite alcanzado');
+        const pc = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
+        pcs[peerId] = pc;
+        localStream.getTracks().forEach(t=>pc.addTrack(t, localStream));
+        pc.ontrack = e=>{ if(e.streams && e.streams[0]) addVideo(peerId, e.streams[0]); }
+        pc.onicecandidate = e=>{ if(e.candidate) ws.send(JSON.stringify({type:'ice',from:myId,to:peerId,cand:e.candidate})); }
+        const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
+        ws.send(JSON.stringify({type:'offer',from:myId,to:peerId,sdp:pc.localDescription.sdp}));
+      }
+
+      async function handleOffer(fromId, sdp){
+        const pc = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
+        pcs[fromId] = pc;
+        localStream.getTracks().forEach(t=>pc.addTrack(t, localStream));
+        pc.ontrack = e=>{ if(e.streams && e.streams[0]) addVideo(fromId, e.streams[0]); }
+        pc.onicecandidate = e=>{ if(e.candidate) ws.send(JSON.stringify({type:'ice',from:myId,to:fromId,cand:e.candidate})); }
+        await pc.setRemoteDescription({type:'offer',sdp});
+        const answer = await pc.createAnswer(); await pc.setLocalDescription(answer);
+        ws.send(JSON.stringify({type:'answer',from:myId,to:fromId,sdp:pc.localDescription.sdp}));
+        status('Intercambiando ofertas/respuestas...');
+      }
+
+      async function handleAnswer(fromId, sdp){
+        const pc = pcs[fromId]; if(!pc) return console.warn('PC no encontrado para',fromId);
+        await pc.setRemoteDescription({type:'answer',sdp});
+        status('Conexión establecida con '+fromId);
+      }
+    }
+
+    /********************
+     * FIN del script
+     ********************/
+  </script>
+</body>
+</html>
